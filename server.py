@@ -18,7 +18,7 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app) 
 
 #Idea Class/Model 
-class Idea(db.Model):
+class IdeaModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True)
     description = db.Column(db.String(300))
@@ -31,11 +31,11 @@ class Idea(db.Model):
     def __init__(self, name, description, tags, image_url, importance_level, effort_in_hours, tech_stack):
         self.name = name 
         self.description = description 
-        self.tags = talgs 
+        self.tags = tags 
         self.image_url = image_url 
         self.importance_level = importance_level
         self.effort_in_hours = effort_in_hours
-        self.tech_stack = techstack 
+        self.tech_stack = tech_stack 
 
 #Idea Schema 
 class IdeaSchema(ma.Schema):
@@ -64,7 +64,21 @@ def get_idea_by_id(id):
 #Create Idea
 @app.route('/idea', methods=['POST'])
 def create_idea():
-    return jsonify({"Message": "IDEA POST ROUTE"})
+    
+    data = {
+        'name': request.json['name'],
+        'description': request.json['description'],
+        'tags':request.json['tags'],
+        'image_url': request.json['image_url'],
+        'importance_level': request.json['importance_level'],
+        'effort_in_hours': request.json['effort_in_hours'],
+        'tech_stack': request.json['tech_stack']
+    }
+
+    new_idea = IdeaModel(*data)
+
+    response = jsonify({"Message": {"IDEA POST ROUTE": new_idea}})
+    return response 
 
 #Update Idea
 @app.route('/idea/<id>', methods=['PUT'])
